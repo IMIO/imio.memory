@@ -3,7 +3,7 @@ from pyramid.view import view_config
 
 
 @view_config(context='..models.Content', renderer='json')
-def view_content(context, request):
+def get_content(context, request):
     return context.data
 
 

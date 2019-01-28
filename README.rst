@@ -6,8 +6,9 @@ Imio memory app. In this application, you can save some json data into persistan
 
 Installation
 ------------
-If pipenv is not installed, install it (`sudo pip install pipenv`)
-Lauch this command:
+If pipenv is not installed, install it (`sudo pip install pipenv`).
+
+And after, you can use this command:
 
     make install
 

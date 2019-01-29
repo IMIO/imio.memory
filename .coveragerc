@@ -1,6 +1,8 @@
 [run]
 source = memory
-omit = memory/test*
+omit =
+    memory/test*
+    memory/pshell.py
 
 [report]
 exclude_lines =

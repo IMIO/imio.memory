@@ -23,3 +23,9 @@ Tests
 Test app with:
 
     make test
+
+.. image:: https://travis-ci.org/IMIO/imio.memory.png
+    :target: http://travis-ci.org/IMIO/imio.memory
+
+.. image:: https://coveralls.io/repos/github/IMIO/imio.memory/badge.svg?branch=master
+    :target: https://coveralls.io/github/IMIO/imio.memory?branch=master

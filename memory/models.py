@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from pyramid.traversal import find_root
 
 
 class Resource(dict):
@@ -10,13 +9,6 @@ class Resource(dict):
 
     def __repr__(self):
         return '<{0} {1}>'.format(self.__class__.__name__, self.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-    def add_child(self, ref, klass):
-        resource = klass(ref=ref, parent=self)
-        self[ref] = resource
 
 
 class Root(Resource):
@@ -47,7 +39,7 @@ class Content(object):
         self.data = data
 
     def update(self, data):
-        self.data = data
+        self.data.update(data)
 
     def delete(self):
         del self.__parent__[self.__name__]

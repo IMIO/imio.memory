@@ -12,7 +12,7 @@ def get_content(context, request):
 
 @view_config(request_method='PATCH', context=Content, renderer='json')
 def update_content(context, request):
-    context.data.update(request.json_body)
+    context.update(request.json_body)
 
 
 @view_config(request_method='PUT', context=Content, renderer='json')

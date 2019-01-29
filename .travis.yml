@@ -1,0 +1,14 @@
+sudo: false
+cache:
+  pip: true
+language: python
+python:
+  - "3.6"
+install:
+  - pip install pipenv
+script:
+  - make test
+  - make coverage
+after_success:
+  - pip install coveralls
+  - coveralls

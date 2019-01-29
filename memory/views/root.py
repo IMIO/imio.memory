@@ -7,7 +7,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 
 
-@view_config(renderer='json', context=Root)
+@view_config(request_method='GET', renderer='json', context=Root)
 def get_root(context, request):
     return list(context)
 

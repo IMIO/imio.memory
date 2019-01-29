@@ -2,13 +2,11 @@
 from .models import appmaker
 from .models import Container
 from .models import Content
-from .views.container import get_container
-from .views.content import get_content
 from .views.root import get_root
 from pyramid import testing
-from pyramid.httpexceptions import HTTPBadRequest
 from webtest.app import AppError
 
+import json
 import pytest
 import unittest
 
@@ -139,6 +137,72 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.post_json('/my_app', {'content_id': 'bsuttor'})
         res = self.testapp.get('/my_app', status=200)
         self.assertTrue(b'bsuttor' in res.body)
+
+    def test_remove_content(self):
+        res = self.testapp.post_json('/', {'app_id': 'my_app'})
+        res = self.testapp.post_json('/my_app', {'container_id': 'imio'})
+        res = self.testapp.post_json('/my_app/imio', {'container_id': 'iasmartweb'})
+        res = self.testapp.post_json('/my_app/imio/iasmartweb', {
+            'content_id': 'bsuttor',
+            'username': 'bsuttor',
+            'email': 'bsu@imio.be',
+            'fullname': 'Benoît Suttor',
+        })
+        res = self.testapp.get('/my_app/imio/iasmartweb/bsuttor', status=200)
+        self.assertEqual(res.json.get('email'), 'bsu@imio.be')
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 1)
+        self.testapp.delete_json('/my_app/imio/iasmartweb/bsuttor')
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 0)
+
+    def test_update_content(self):
+        res = self.testapp.post_json('/', {'app_id': 'my_app'})
+        res = self.testapp.post_json('/my_app', {'container_id': 'imio'})
+        res = self.testapp.post_json('/my_app/imio', {'container_id': 'iasmartweb'})
+        res = self.testapp.post_json('/my_app/imio/iasmartweb', {
+            'content_id': 'bsuttor',
+            'username': 'bsuttor',
+            'email': 'bsu@imio.be',
+            'fullname': 'Benoît Suttor',
+        })
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 1)
+        res = self.testapp.patch_json('/my_app/imio/iasmartweb/bsuttor', {
+            'email': 'benoit@imio.be',
+        })
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 1)
+        res = self.testapp.get('/my_app/imio/iasmartweb/bsuttor', status=200)
+        self.assertEqual(res.json.get('email'), 'benoit@imio.be')
+
+    def test_replace_content(self):
+        res = self.testapp.post_json('/', {'app_id': 'my_app'})
+        res = self.testapp.post_json('/my_app', {'container_id': 'imio'})
+        res = self.testapp.post_json('/my_app/imio', {'container_id': 'iasmartweb'})
+        res = self.testapp.post_json('/my_app/imio/iasmartweb', {
+            'content_id': 'bsuttor',
+            'username': 'bsuttor',
+            'email': 'bsu@imio.be',
+            'fullname': 'Benoît Suttor',
+        })
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 1)
+        res = self.testapp.put_json('/my_app/imio/iasmartweb/bsuttor', {
+            'content_id': 'benoit',
+            'username': 'benoit',
+            'email': 'ben@imio.be',
+            'fullname': 'Ben Suttor',
+        })
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 1)
+        res = self.testapp.get('/my_app/imio/iasmartweb/bsuttor', status=404)
+        self.assertEqual(res.body, b'The path /my_app/imio/iasmartweb/bsuttor is not found')  # noqa
+        res = self.testapp.get('/my_app/imio/iasmartweb/benoit', status=200)
+        self.assertEqual(res.json.get('email'), 'ben@imio.be')
+        res = self.testapp.get('/my_app/imio/iasmartweb', status=200)
+        self.assertEqual(len(res.json), 1)
+
 
 # class ViewTests(unittest.TestCase):
 #     def setUp(self):

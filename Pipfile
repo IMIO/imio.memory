@@ -7,6 +7,7 @@ verify_ssl = true
 cookiecutter = "*"
 ipdb = "*"
 ipython = "*"
+coveralls = "*"
 
 [packages]
 memory = {path = ".",extras = ["testing"],editable = true}

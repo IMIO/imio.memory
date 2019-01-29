@@ -10,5 +10,8 @@ run:
 test:
 	pipenv run pytest -qs
 
+coverage:
+	pipenv run pytest --cov=memory
+
 clean:
 	pipenv clean && rm -rf memory.egg-info/

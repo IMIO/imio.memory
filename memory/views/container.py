@@ -2,17 +2,9 @@
 from ..models import Container
 from ..models import Content
 from pyramid.httpexceptions import HTTPBadRequest
-from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.view import view_config
-
-
-# create wuth POST
-# Update with PATCH
-# Reading with GET
-# replace with PUT
-# delete with DELETE
 
 
 @view_config(request_method='GET', context=Container, renderer='json')
@@ -50,3 +42,65 @@ def delete_content(context, request):
     return Response(
         status='202 Accepted',
         content_type='application/json; charset=UTF-8')
+
+
+class UserList(list):
+    def add_or_merge(self, obj):
+        # check if user already exist with the same municipality_id
+        if len(self) == 0:
+            self.append(obj)
+        else:
+            for item in self:
+                if obj.get('user_id') == item.get('user_id'):
+                    # merge
+                    # import ipdb; ipdb.set_trace()
+                    user_id = obj.get('user_id')
+                    old_app_id = item.get('app_id')
+                    new_app_id = obj.get('app_id')
+                    item['old_{0}_password'.format(old_app_id)] = item.get('password')
+                    item['old_{0}_password'.format(new_app_id)] = item.get('password')
+                    item['old_{0}_userid'.format(old_app_id)] = user_id
+                    item['old_{0}_userid'.format(new_app_id)] = user_id
+                else:
+                    self.append(obj)
+
+    def keys(self):
+        return [k for ro in self for k in ro.keys()]
+
+    def values(self):
+        keys = self.keys()
+        vals = []
+        for row in self:
+            list = []
+            for key in keys:
+                list.append(row[key])
+            vals.append(list)
+        return vals
+
+
+@view_config(name='csv', context=Container, renderer='csv')
+def merged_csv(context, request):
+    headers = [
+        'app_id',
+        'municipality_id',
+        'user_id',
+        'fullname',
+        'email',
+        'password'
+    ]
+    rows = UserList()
+    for app_id, app in context.items():
+        # import ipdb; ipdb.set_trace()
+        new_user = {}
+        new_user['municipality_id'] = context.__name__
+        new_user['app_id'] = app_id
+        for user_id, user in app.items():
+            new_user['user_id'] = user.get('content_id')
+            for head in headers:
+                if not new_user.get(head, ''):
+                    new_user[head] = user.get(head)
+            rows.add_or_merge(new_user)
+    return {
+      'header': rows.keys(),
+      'rows': rows.values(),
+    }

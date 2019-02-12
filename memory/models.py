@@ -44,6 +44,12 @@ class Content(object):
     def delete(self):
         del self.__parent__[self.__name__]
 
+    def keys(self):
+        return self.data.keys()
+
+    def get(self, key):
+        return self.data.get(key, '')
+
     def __repr__(self):
         return '<{0} {1}/{2}>'.format(
             self.__class__.__name__,

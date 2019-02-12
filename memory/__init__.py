@@ -21,5 +21,6 @@ def main(global_config, **settings):
         config.include('pyramid_chameleon')
         config.include('.routes')
         config.include('cornice')
+        config.add_renderer('csv', 'memory.renderers.CSVRenderer')
         config.scan()
     return config.make_wsgi_app()

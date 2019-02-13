@@ -15,3 +15,6 @@ coverage:
 
 clean:
 	pipenv clean && rm -rf memory.egg-info/
+
+docker-image:
+	docker build -t docker-staging.imio.be/imio/memory:latest .

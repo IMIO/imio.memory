@@ -29,3 +29,10 @@ Test app with:
 
 .. image:: https://coveralls.io/repos/github/IMIO/imio.memory/badge.svg?branch=master
     :target: https://coveralls.io/github/IMIO/imio.memory?branch=master
+
+Add an app
+----------
+
+Add an application with curl command
+
+    $ curl -X POST http://0.0.0.0:6543 -d '{"app_id": "newapp"}'

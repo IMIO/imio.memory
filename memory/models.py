@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from persistent.mapping import PersistentMapping
 
 
 class Resource(dict):
@@ -11,10 +12,9 @@ class Resource(dict):
         return '<{0} {1}>'.format(self.__class__.__name__, self.__name__)
 
 
-class Root(Resource):
-
-    def __init__(self):
-        Resource.__init__(self, ref=None, parent=None)
+class Root(PersistentMapping):
+    __name__ = None
+    __parent__ = None
 
 
 class Container(Resource):

@@ -12,7 +12,7 @@ RUN apk add --no-cache --virtual .build-deps \
     pcre-dev \
     zlib-dev &&\
     mkdir filestorage
-RUN pip install -e .  && pip install -e ".[testing]"
+RUN pip install -e . && pip install -e ".[testing]"
 EXPOSE 6543
 VOLUME /app/filestorage
 CMD pserve production.ini

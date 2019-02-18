@@ -25,10 +25,10 @@ class RootModelTests(unittest.TestCase):
 
     def _getTargetClass(self):
         from .models import Root
-        return Root
+        return Root()
 
     def _makeOne(self):
-        return self._getTargetClass()()
+        return self._getTargetClass()
 
     def test_it(self):
         root = self._makeOne()
@@ -43,7 +43,7 @@ class ContainerTests(unittest.TestCase):
     def test_add(self):
         app = Container(self.root, 'users')
         self.assertEqual(app.__parent__, self.root)
-        Container(self.root, 'imio')
+        other_app = Container(self.root, 'imio')
         request = testing.DummyRequest()
         keys = get_root(self.root, request)
         self.assertEqual(keys, ['users', 'imio'])
@@ -124,24 +124,30 @@ class FunctionalTests(unittest.TestCase):
     def test_add_container(self):
         res = self.testapp.post_json('/', {'app_id': 'my_app'})
         res = self.testapp.get('/', status=200)
-        self.assertTrue(b'["my_app"]' in res.body)
+        self.assertEqual(['my_app'], res.json_body)
         with pytest.raises(AppError):
             self.testapp.post_json('/', {'app_idd': 'my_app'})
         res = self.testapp.get('/my_app', status=200)
-        res = self.testapp.post_json('/my_app', {'container_id': 'bsuttor'})
+        res = self.testapp.post_json('/my_app', {'container_id': 'iasmartweb'})
         res = self.testapp.get('/my_app', status=200)
-        self.assertTrue(b'bsuttor' in res.body)
+        self.assertEqual(['iasmartweb'], res.json_body)
 
     def test_add_content(self):
         res = self.testapp.post_json('/', {'app_id': 'my_app'})
         res = self.testapp.get('/', status=200)
-        self.assertTrue(b'["my_app"]' in res.body)
+        self.assertEqual(['my_app'], res.json_body)
         with pytest.raises(AppError):
             self.testapp.post_json('/', {'app_idd': 'my_app'})
         res = self.testapp.get('/my_app', status=200)
-        res = self.testapp.post_json('/my_app', {'content_id': 'bsuttor'})
+        res = self.testapp.post_json('/my_app', {'container_id': 'iasmartweb'})
         res = self.testapp.get('/my_app', status=200)
-        self.assertTrue(b'bsuttor' in res.body)
+        self.assertEqual(['iasmartweb'], res.json_body)
+        res = self.testapp.post_json(
+            '/my_app/iasmartweb',
+            {'content_id': 'bsuttor'}
+        )
+        res = self.testapp.get('/my_app/iasmartweb', status=200)
+        self.assertEqual(['bsuttor'], res.json_body)
 
     def test_remove_content(self):
         res = self.testapp.post_json('/', {'app_id': 'my_app'})
@@ -233,12 +239,21 @@ class FunctionalTests(unittest.TestCase):
             'username': 'bsuttor',
             'email': 'bsu@imio.be',
             'fullname': 'Benoît Suttor',
+            'password': 'webpass'
+        })
+        res = self.testapp.post_json('/my_app/imio/iasmartweb', {
+            'content_id': 'jbond',
+            'username': 'jbond',
+            'email': 'james@bond.co.uk',
+            'fullname': 'James Bond',
+            'password': '007'
         })
         res = self.testapp.post_json('/my_app/imio/iaurban', {
             'content_id': 'bsuttor',
             'username': 'bsuttor',
-            'email': 'bsu@imio.be',
-            'fullname': 'Benoît Suttor',
+            'email': 'benoit@imio.be',
+            'fullname': '',
+            'password': 'urbanpass'
         })
         res = self.testapp.get('/my_app/imio/csv', status=200)
         self.assertEqual(res.content_type, 'text/csv')

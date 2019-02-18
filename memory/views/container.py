@@ -31,6 +31,18 @@ def create_content(context, request):
     else:
         Container(context, container_id)
 
+    # if content_id:
+    #     new_content = Content(content_id)
+    #     new_content.__name__ = content_id
+    #     new_content.__parent__ = context
+    #     new_content['data'] = request.json_body
+    #     context[content_id] = new_content
+    # if container_id:
+    #     new_container = Container(container_id)
+    #     new_container.__name__ = container_id
+    #     new_container.__parent__ = context
+    #     context[container_id] = new_container
+
     return Response(
         status='201 Created',
         content_type='application/json; charset=UTF-8')
@@ -51,21 +63,33 @@ class UserList(list):
             self.append(obj)
         else:
             for item in self:
+                index = self.index(item)
+                # import ipdb; ipdb.set_trace()
                 if obj.get('user_id') == item.get('user_id'):
                     # merge
-                    # import ipdb; ipdb.set_trace()
                     user_id = obj.get('user_id')
                     old_app_id = item.get('app_id')
                     new_app_id = obj.get('app_id')
                     item['old_{0}_password'.format(old_app_id)] = item.get('password')
-                    item['old_{0}_password'.format(new_app_id)] = item.get('password')
+                    item['old_{0}_password'.format(new_app_id)] = obj.get('password')
                     item['old_{0}_userid'.format(old_app_id)] = user_id
                     item['old_{0}_userid'.format(new_app_id)] = user_id
-                else:
+                    self[index] = item
+                elif obj.get('user_id') not in self.get('user_id'):
                     self.append(obj)
+                else:
+                    pass
 
     def keys(self):
-        return [k for ro in self for k in ro.keys()]
+        listkeys = []
+        for row in self:
+            for key in row.keys():
+                if key not in listkeys:
+                    listkeys.append(key)
+        return listkeys
+
+    def get(self, key):
+        return [val[key] for val in self]
 
     def values(self):
         keys = self.keys()
@@ -73,6 +97,8 @@ class UserList(list):
         for row in self:
             list = []
             for key in keys:
+                if key not in row.keys():
+                    row[key] = ''
                 list.append(row[key])
             vals.append(list)
         return vals
@@ -90,11 +116,10 @@ def merged_csv(context, request):
     ]
     rows = UserList()
     for app_id, app in context.items():
-        # import ipdb; ipdb.set_trace()
-        new_user = {}
-        new_user['municipality_id'] = context.__name__
-        new_user['app_id'] = app_id
-        for user_id, user in app.items():
+        for user_id, user in app.data.items():
+            new_user = {}
+            new_user['municipality_id'] = context.__name__
+            new_user['app_id'] = app_id
             new_user['user_id'] = user.get('content_id')
             for head in headers:
                 if not new_user.get(head, ''):

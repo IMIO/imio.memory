@@ -1,10 +1,11 @@
-FROM python:3.6-alpine
+FROM python:3.7-alpine
 COPY setup.py README.rst production.ini CHANGES.txt /app/
 COPY memory /app/memory
 WORKDIR /app
 RUN apk add --no-cache --virtual .build-deps \
     gcc \
     libc-dev \
+    libffi-dev \
     libjpeg-turbo-dev \
     libpng-dev \
     libxml2-dev \

@@ -49,7 +49,6 @@ class ContainerTests(unittest.TestCase):
 
     def test_remove(self):
         app = Container(self.root, "users")
-        A
         self.assertEqual(app.__parent__, self.root)
         self.assertEqual(len(self.root), 1)
         app.delete()

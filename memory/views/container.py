@@ -31,18 +31,6 @@ def create_content(context, request):
     else:
         Container(context, container_id)
 
-    # if content_id:
-    #     new_content = Content(content_id)
-    #     new_content.__name__ = content_id
-    #     new_content.__parent__ = context
-    #     new_content['data'] = request.json_body
-    #     context[content_id] = new_content
-    # if container_id:
-    #     new_container = Container(container_id)
-    #     new_container.__name__ = container_id
-    #     new_container.__parent__ = context
-    #     context[container_id] = new_container
-
     return Response(
         status='201 Created',
         content_type='application/json; charset=UTF-8')
@@ -120,11 +108,13 @@ def merged_csv(context, request):
             new_user = {}
             new_user['municipality_id'] = context.__name__
             new_user['app_id'] = app_id
-            new_user['user_id'] = user.get('content_id')
+            new_user['user_id'] = user.get('content_id').lower()
             for head in headers:
                 if not new_user.get(head, ''):
                     new_user[head] = user.get(head)
             rows.add_or_merge(new_user)
+    filename = f'{context.__name__}.csv'
+    request.response.content_disposition = 'attachment;filename=' + filename
     return {
       'header': rows.keys(),
       'rows': rows.values(),

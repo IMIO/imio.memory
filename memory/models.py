@@ -6,7 +6,6 @@ import transaction
 
 
 class Container(PersistentMapping):
-
     def __init__(self, parent, name):
         PersistentMapping.__init__(self)
         self.__parent__ = parent
@@ -24,7 +23,7 @@ class Container(PersistentMapping):
         del self.__parent__[self.__name__]
 
     def __repr__(self):
-        return '<{0} {1}>'.format(self.__class__.__name__, self.__name__)
+        return "<{0} {1}>".format(self.__class__.__name__, self.__name__)
 
 
 class Root(Container):
@@ -54,20 +53,17 @@ class Content(Persistent):
         return self.data.keys()
 
     def get(self, key):
-        return self.data.get(key, '')
+        return self.data.get(key, "")
 
     def __repr__(self):
-        return '<{0} {1}/{2}>'.format(
-            self.__class__.__name__,
-            self.__parent__.__name__,
-            self.__name__
+        return "<{0} {1}/{2}>".format(
+            self.__class__.__name__, self.__parent__.__name__, self.__name__
         )
 
 
-
 def appmaker(zodb_root):
-    if 'app_root' not in zodb_root:
+    if "app_root" not in zodb_root:
         app_root = Root()
-        zodb_root['app_root'] = app_root
+        zodb_root["app_root"] = app_root
         transaction.commit()
-    return zodb_root['app_root']
+    return zodb_root["app_root"]

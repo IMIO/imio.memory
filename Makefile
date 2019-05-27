@@ -17,4 +17,4 @@ clean:
 	pipenv clean && rm -rf memory.egg-info/ && rm -rf .pytest_cache
 
 docker-image:
-	docker build --no-cache -t docker-staging.imio.be/imio/memory:latest .
+	docker build --no-cache -t imio/memory:latest .

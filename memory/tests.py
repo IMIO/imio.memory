@@ -266,3 +266,42 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.get("/my_app/imio/csv", status=200)
         self.assertEqual(res.content_type, "text/csv")
         self.assertTrue("bsuttor" in str(res.body))
+
+    def test_export_json(self):
+        res = self.testapp.post_json("/", {"app_id": "my_app"})
+        res = self.testapp.post_json("/my_app", {"container_id": "imio"})
+        res = self.testapp.post_json("/my_app/imio", {"container_id": "iasmartweb"})
+        res = self.testapp.post_json("/my_app/imio", {"container_id": "iaurban"})
+        res = self.testapp.post_json(
+            "/my_app/imio/iasmartweb",
+            {
+                "content_id": "bsuttor",
+                "username": "bsuttor",
+                "email": "bsu@imio.be",
+                "fullname": "Benoît Suttor",
+                "password": "webpass",
+            },
+        )
+        res = self.testapp.post_json(
+            "/my_app/imio/iasmartweb",
+            {
+                "content_id": "jbond",
+                "username": "jbond",
+                "email": "james@bond.co.uk",
+                "fullname": "James Bond",
+                "password": "007",
+            },
+        )
+        res = self.testapp.post_json(
+            "/my_app/imio/iaurban",
+            {
+                "content_id": "bsuttor",
+                "username": "bsuttor",
+                "email": "benoit@imio.be",
+                "fullname": "",
+                "password": "urbanpass",
+            },
+        )
+        res = self.testapp.get("/my_app/imio/json", status=200)
+        self.assertEqual(res.content_type, "application/json")
+        self.assertEqual(len(res.json_body["users"]), 3)

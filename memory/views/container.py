@@ -131,6 +131,9 @@ def get_json(context, request):
             juser["last_name"] = ""
             juser["email"] = user.get("email")
             juser["password"] = user.get("password")
+            slug_services = []
+            slug_services.append("")
+            juser["services"] = slug_services
             users.append(juser)
     result["users"] = users
     result["services"] = []

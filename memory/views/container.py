@@ -126,7 +126,7 @@ def get_json(context, request):
         for user_id, user in app.data.items():
             juser = {}
             juser["username"] = user.get("username")
-            juser["uuid"] = user.get("username")
+            juser["uuid"] = ""
             juser["first_name"] = ""
             juser["last_name"] = ""
             juser["email"] = user.get("email")

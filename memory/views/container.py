@@ -117,24 +117,25 @@ def get_json(context, request):
     if retrieve is None:
         raise HTTPNotFound()
     result = {}
-    locality = {}
-    locality["name"] = context.__name__
-    locality["slug"] = ""
-    result["locality"] = locality
     users = []
     for app_id, app in context.items():
+        if isinstance(app, Content):
+            raise HTTPNotFound()
         for user_id, user in app.data.items():
             juser = {}
+            locality_slug = user.get("mun_slug")
             juser["username"] = user.get("username")
             juser["uuid"] = ""
             juser["first_name"] = ""
             juser["last_name"] = ""
             juser["email"] = user.get("email")
             juser["password"] = user.get("password")
-            slug_services = []
-            slug_services.append("")
-            juser["allowed_services"] = slug_services
+            juser["allowed_services"] = user.get("allowed_services")
             users.append(juser)
     result["users"] = users
+    locality = {}
+    locality["name"] = context.__name__
+    locality["slug"] = locality_slug
+    result["locality"] = locality
     result["services"] = []
     return result

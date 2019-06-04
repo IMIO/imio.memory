@@ -118,6 +118,7 @@ def get_json(context, request):
         raise HTTPNotFound()
     result = {}
     users = []
+    services = []
     for app_id, app in context.items():
         if isinstance(app, Content):
             raise HTTPNotFound()
@@ -132,25 +133,26 @@ def get_json(context, request):
             juser["password"] = user.get("password")
             juser["allowed_services"] = user.get("allowed_services")
             users.append(juser)
-    result["users"] = users
+        result["users"] = users
+
+        service = {}
+        service["name"] = "{0} {1}".format(
+            context.__name__, app_id.lower().replace(".", "")
+        )
+        service["slug"] = "{0}-{1}".format(
+            context.__name__, app_id.lower().replace(".", "")
+        )
+        service["client_id"] = ""
+        service["client_secret"] = ""
+        service["redirect_uris"] = []
+        service["post_logout_redirect_uris"] = []
+        service["frontchannel_logout_uri"] = ""
+        service["open_to_all"] = False
+        services.append(service)
+    result["services"] = services
+
     locality = {}
     locality["name"] = context.__name__
     locality["slug"] = locality_slug
     result["locality"] = locality
-    services = []
-    service = {}
-    service["name"] = "{0} {1}".format(
-        context.__name__, app_id.lower().replace(".", "")
-    )
-    service["slug"] = "{0}-{1}".format(
-        context.__name__, app_id.lower().replace(".", "")
-    )
-    service["client_id"] = ""
-    service["client_secret"] = ""
-    service["redirect_uris"] = []
-    service["post_logout_redirect_uris"] = []
-    service["frontchannel_logout_uri"] = ""
-    service["open_to_all"] = False
-    services.append(service)
-    result["services"] = services
     return result

@@ -52,9 +52,8 @@ class UserList(list):
         else:
             for item in self:
                 index = self.index(item)
-                # import ipdb; ipdb.set_trace()
                 if (
-                    obj.get("user_id") == item.get("user_id")
+                    obj.get("content_id") == item.get("content_id")
                     or obj.get("fullname").lower() == item.get("fullname").lower()
                 ):
                     # merge
@@ -63,10 +62,10 @@ class UserList(list):
                     new_app_id = obj.get("app_id")
                     item["old_{0}_password".format(old_app_id)] = item.get("password")
                     item["old_{0}_password".format(new_app_id)] = obj.get("password")
-                    item["old_{0}_userid".format(old_app_id)] = user_id
-                    item["old_{0}_userid".format(new_app_id)] = user_id
+                    item["old_{0}_userid".format(old_app_id)] = item.get("content_id")
+                    item["old_{0}_userid".format(new_app_id)] = obj.get("content_id")
                     self[index] = item
-                elif obj.get("user_id") not in self.get("user_id") and obj.get(
+                elif obj.get("content_id") not in self.get("content_id") and obj.get(
                     "fullname"
                 ).lower() not in [fulln.lower() for fulln in self.get("fullname")]:
                     self.append(obj)
@@ -106,6 +105,7 @@ def merged_csv(context, request):
             new_user = {}
             new_user["municipality_id"] = context.__name__
             new_user["app_id"] = app_id
+            new_user["content_id"] = user.get("content_id").lower()
             new_user["user_id"] = user.get("user_id").lower()
             for head in headers:
                 if not new_user.get(head, ""):

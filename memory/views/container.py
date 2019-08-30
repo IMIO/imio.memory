@@ -66,7 +66,9 @@ class UserList(list):
                     item["old_{0}_userid".format(old_app_id)] = user_id
                     item["old_{0}_userid".format(new_app_id)] = user_id
                     self[index] = item
-                elif obj.get("user_id") not in self.get("user_id"):
+                elif obj.get("user_id") not in self.get("user_id") and obj.get(
+                    "fullname"
+                ).lower() not in [fulln.lower() for fulln in self.get("fullname")]:
                     self.append(obj)
                 else:
                     pass

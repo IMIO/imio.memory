@@ -233,6 +233,7 @@ class FunctionalTests(unittest.TestCase):
         res = self.testapp.post_json("/my_app", {"container_id": "imio"})
         res = self.testapp.post_json("/my_app/imio", {"container_id": "iasmartweb"})
         res = self.testapp.post_json("/my_app/imio", {"container_id": "iaurban"})
+        res = self.testapp.post_json("/my_app/imio", {"container_id": "iateleservice"})
         res = self.testapp.post_json(
             "/my_app/imio/iasmartweb",
             {
@@ -263,9 +264,20 @@ class FunctionalTests(unittest.TestCase):
                 "password": "urbanpass",
             },
         )
+        res = self.testapp.post_json(
+            "/my_app/imio/iateleservice",
+            {
+                "content_id": "suttorb",
+                "username": "suttorb",
+                "email": "bsu@imio.be",
+                "fullname": "benoît suttor",
+                "password": "Password",
+            },
+        )
         res = self.testapp.get("/my_app/imio/csv", status=200)
         self.assertEqual(res.content_type, "text/csv")
         self.assertTrue("bsuttor" in str(res.body))
+        self.assertEqual(len(res.body.decode("utf8").split("\r\n")), 4)
 
     def test_export_json(self):
         res = self.testapp.post_json("/", {"app_id": "my_app"})

@@ -106,7 +106,7 @@ def merged_csv(context, request):
             new_user = {}
             new_user["municipality_id"] = context.__name__
             new_user["app_id"] = app_id
-            new_user["user_id"] = user.get("content_id").lower()
+            new_user["user_id"] = user.get("user_id").lower()
             for head in headers:
                 if not new_user.get(head, ""):
                     new_user[head] = user.get(head)

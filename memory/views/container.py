@@ -53,7 +53,10 @@ class UserList(list):
             for item in self:
                 index = self.index(item)
                 # import ipdb; ipdb.set_trace()
-                if obj.get("user_id") == item.get("user_id"):
+                if (
+                    obj.get("user_id") == item.get("user_id")
+                    or obj.get("fullname").lower() == item.get("fullname").lower()
+                ):
                     # merge
                     user_id = obj.get("user_id")
                     old_app_id = item.get("app_id")

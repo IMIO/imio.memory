@@ -32,9 +32,11 @@ pipeline {
                 }
             }
             steps {
-                // sh "mco shell run 'docker pull docker-staging.imio.be/imio/memory:$BUILD_ID' -I /^staging.imio.be/"
-                // sh "mco shell run '/srv/docker_scripts/website-update-all-images.sh' -t 1200 --tail -I /^staging.imio.be/"
                 sh "echo 'deploy to prod'"
+                sh "mco shell run 'docker pull docker-staging.imio.be/imio/memory:$BUILD_ID' -I /^memory/"
+                sh "mco shell run 'docker pull docker-staging.imio.be/imio/memory:latest' -I /^memory/"
+                sh "mco shell run 'docker pull docker-staging.imio.be/imio/memory:latest' -I /^memory/"
+                sh "mco shell run 'systemctl restart docker-memory.service' -I /^memory/"
             }
             // steps {
             //     deployToProd (

@@ -16,7 +16,6 @@ class Container(PersistentMapping):
     #     self.data = self.data.update({child.__name__: child})
 
     def retrieve(self):
-        # import ipdb; ipdb.set_trace()
         return [elem for elem in self]
 
     def delete(self):

@@ -97,7 +97,16 @@ class UserList(list):
 
 @view_config(name="csv", context=Container, renderer="csv")
 def merged_csv(context, request):
-    headers = ["app_id", "municipality_id", "user_id", "fullname", "email", "password"]
+    headers = [
+        "app_id",
+        "municipality_id",
+        "user_id",
+        "fullname",
+        "email",
+        "first_name",
+        "last_name",
+        "password",
+    ]
     rows = UserList()
     for app_id, app in context.items():
         for user_id, user in app.data.items():

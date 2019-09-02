@@ -48,6 +48,8 @@ class UserList(list):
     def add_or_merge(self, obj):
         # check if user already exist with the same municipality_id
         if len(self) == 0:
+            obj["old_{0}_password".format(obj.get("app_id"))] = obj.get("password")
+            obj["old_{0}_userid".format(obj.get("app_id"))] = obj.get("content_id")
             self.append(obj)
         else:
             for item in self:
@@ -58,12 +60,9 @@ class UserList(list):
                 ):
                     # merge
                     user_id = obj.get("user_id")
-                    old_app_id = item.get("app_id")
-                    new_app_id = obj.get("app_id")
-                    item["old_{0}_password".format(old_app_id)] = item.get("password")
-                    item["old_{0}_password".format(new_app_id)] = obj.get("password")
-                    item["old_{0}_userid".format(old_app_id)] = item.get("content_id")
-                    item["old_{0}_userid".format(new_app_id)] = obj.get("content_id")
+                    app_id = obj.get("app_id")
+                    item["old_{0}_password".format(app_id)] = obj.get("password")
+                    item["old_{0}_userid".format(app_id)] = obj.get("content_id")
                     self[index] = item
                 elif obj.get("content_id") not in self.get("content_id") and obj.get(
                     "fullname"
